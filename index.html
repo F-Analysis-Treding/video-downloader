@@ -1,56 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A-Z Video Downloader</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 50px;
-        }
-        h1 {
-            color: #333;
-        }
-        input {
-            padding: 10px;
-            width: 60%;
-            margin-top: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            margin-left: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A-Z Video Downloader</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+    header {
+        padding: 20px;
+        background: rgba(0,0,0,0.3);
+    }
+    header img {
+        height: 50px;
+        vertical-align: middle;
+    }
+    header h1 {
+        display: inline-block;
+        margin-left: 10px;
+        font-size: 24px;
+    }
+    main {
+        padding: 20px;
+    }
+    input[type="text"] {
+        padding: 10px;
+        width: 80%;
+        max-width: 400px;
+        border: none;
+        border-radius: 5px;
+        margin-top: 15px;
+    }
+    button {
+        margin: 10px;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .wm {
+        background-color: #ff9800;
+        color: white;
+    }
+    .nowm {
+        background-color: #4caf50;
+        color: white;
+    }
+    .links {
+        margin-top: 30px;
+        background: rgba(0,0,0,0.3);
+        padding: 15px;
+        border-radius: 10px;
+    }
+    .links a {
+        display: block;
+        color: #ffd700;
+        margin: 5px 0;
+        text-decoration: none;
+    }
+</style>
+<script>
+function downloadVideo(type) {
+    const url = document.getElementById("videoLink").value.trim();
+    if (!url) {
+        alert("⚠️ Please enter a valid video link!");
+        return;
+    }
+    if (type === 'wm') {
+        window.open("https://example.com/download?url=" + encodeURIComponent(url) + "&wm=true", "_blank");
+    } else {
+        window.open("https://example.com/download?url=" + encodeURIComponent(url) + "&wm=false", "_blank");
+    }
+}
+</script>
 </head>
 <body>
-    <h1>A-Z Video Downloader</h1>
-    <p>Paste your video link below and click Download</p>
-    <input type="text" id="videoLink" placeholder="https://example.com/video">
-    <button onclick="downloadVideo()">Download</button>
 
-    <script>
-        function downloadVideo() {
-            const link = document.getElementById('videoLink').value;
-            if (!link) {
-                alert('Please paste a valid video link!');
-                return;
-            }
-            alert('Downloading from: ' + link);
-            // Yahan tum apna real backend ya API link add karoge
-        }
-    </script>
+<header>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Logo_example.png" alt="Logo">
+    <h1>A-Z Video Downloader</h1>
+</header>
+
+<main>
+    <h2>Download Your Favorite Videos</h2>
+    <input type="text" id="videoLink" placeholder="Paste your video link here">
+    <div>
+        <button class="wm" onclick="downloadVideo('wm')">Download With Watermark</button>
+        <button class="nowm" onclick="downloadVideo('nowm')">Download Without Watermark</button>
+    </div>
+
+    <div class="links">
+        <h3>Example Public Videos</h3>
+        <a href="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" target="_blank">Sample Video 1</a>
+        <a href="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_5mb.mp4" target="_blank">Sample Video 2</a>
+        <a href="https://sample-videos.com/video123/mp4/720/sample-mp4-file.mp4" target="_blank">Sample Video 3</a>
+    </div>
+</main>
+
 </body>
 </html>
-
-
-

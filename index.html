@@ -1,295 +1,56 @@
-az-video-downloader/
-├─ package.json
-├─ index.html
-├─ vite.config.js
-├─ tailwind.config.js
-├─ postcss.config.js
-├─ vercel.json
-├─ README.md
-├─ api/
-│  └─ download.js
-└─ src/
-   ├─ main.jsx
-   ├─ index.css
-   └─ App.jsx
-
-{
-  "name": "az-video-downloader",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview --port 4173"
-  },
-  "dependencies": {
-    "framer-motion": "^11.3.31",
-    "lucide-react": "^0.452.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.41",
-    "tailwindcss": "^3.4.10",
-    "vite": "^5.4.2"
-  }
-}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A-Z Video Downloader</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        input {
+            padding: 10px;
+            width: 60%;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>A-Z Video Downloader</h1>
+    <p>Paste your video link below and click Download</p>
+    <input type="text" id="videoLink" placeholder="https://example.com/video">
+    <button onclick="downloadVideo()">Download</button>
+
+    <script>
+        function downloadVideo() {
+            const link = document.getElementById('videoLink').value;
+            if (!link) {
+                alert('Please paste a valid video link!');
+                return;
+            }
+            alert('Downloading from: ' + link);
+            // Yahan tum apna real backend ya API link add karoge
+        }
+    </script>
+</body>
 </html>
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-})
-
-
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
-  theme: { extend: {} },
-  plugins: [],
-}
-
-export default {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-}
-
-
-{
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist"
-}
-
-
-# A-Z Video Downloader (Frontend)
-
-React + Vite + Tailwind UI for pasting a video link and choosing **Without/With Watermark**.
-**Legal:** sirf wahi content download karo jiske liye tumhare paas permission ho. Kai platforms external downloading ko mana karte hain.
-
-## Quick Deploy (Vercel)
-1) Is folder ko GitHub repo me push karo
-2) vercel.com → New Project → Import your repo
-3) Framework: Vite
-4) Build command: `npm run build`
-5) Output dir: `dist`
-6) Deploy
-
-### Backend (optional)
-- `src/App.jsx` me `BACKEND_MODE` ko `"real"` karo
-- `/api/download` ko apne licensed provider se connect karo (keys server par rakho)
-
-
-export default async function handler(req, res) {
-  try {
-    const { url, variant } = req.query || {}
-    if (!url) return res.status(400).json({ ok:false, code:'INVALID', message:'Missing url' })
-
-    const allowed = ['youtube.com','youtu.be','tiktok.com','facebook.com','fb.watch','instagram.com','snackvideo.com']
-    const host = (()=>{ try { return new URL(url).hostname.toLowerCase() } catch { return '' } })()
-    if (!allowed.some(h => host.includes(h))) {
-      return res.status(400).json({ ok:false, code:'UNSUPPORTED', message:'This link is not working on this website' })
-    }
-
-    // TODO: yahan apna licensed provider call karo (API key backend par hi rakho)
-    return res.status(200).json({
-      ok: true,
-      title: 'Sample video',
-      thumb: 'https://placehold.co/640x360/png?text=Preview',
-      sources: [
-        { quality: '1080p', format: 'mp4', url: '#' },
-        { quality: '720p',  format: 'mp4', url: '#' }
-      ],
-    })
-  } catch (e) {
-    return res.status(500).json({ ok:false, code:'SERVER', message: e.message || 'Server error' })
-  }
-}
-
-
-
-
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-)
-
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root { color-scheme: dark; }
-body { @apply bg-neutral-950 text-white; }
-
-
-import React, { useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
-import { Search, Download, Link as LinkIcon, PlayCircle, CheckCircle2, AlertTriangle } from 'lucide-react'
-
-const SITE_NAME = 'A-Z Video Downloader'
-const SUPPORTED = [
-  { key: 'youtube', hostIncludes: ['youtube.com', 'youtu.be'], label: 'YouTube', logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg' },
-  { key: 'tiktok', hostIncludes: ['tiktok.com'], label: 'TikTok', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/69/TikTok_logo.svg' },
-  { key: 'facebook', hostIncludes: ['facebook.com', 'fb.watch'], label: 'Facebook', logo: 'https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg' },
-  { key: 'instagram', hostIncludes: ['instagram.com'], label: 'Instagram', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg' },
-  { key: 'snackvideo', hostIncludes: ['snackvideo.com'], label: 'SnackVideo', logo: 'https://seeklogo.com/images/S/snack-video-logo-3F5B1A3BA3-seeklogo.com.png' },
-]
-const ALLOWED_HOSTS = SUPPORTED.flatMap(s => s.hostIncludes)
-
-function getPlatform (url) {
-  try {
-    const u = new URL(url)
-    const host = u.hostname.toLowerCase()
-    const found = SUPPORTED.find(p => p.hostIncludes.some(h => host.includes(h)))
-    return found?.key || null
-  } catch { return null }
-}
-function validateUrl (input) {
-  if (!input || !input.trim()) return { ok: false, code: 'INVALID', message: 'Video link is wrong' }
-  try {
-    const u = new URL(input.trim())
-    const host = u.hostname.toLowerCase()
-    const supported = ALLOWED_HOSTS.some(h => host.includes(h))
-    if (!supported) return { ok: false, code: 'UNSUPPORTED', message: 'This link is not working on this website' }
-    return { ok: true, url: u.toString() }
-  } catch { return { ok: false, code: 'INVALID', message: 'Video link is wrong' } }
-}
-
-async function fetchDownloadInfo (url, variant) {
-  // 🔧 Change to "real" and point to your backend when you have one
-  const BACKEND_MODE = 'mock' // 'mock' | 'real'
-  const BACKEND_URL = '/api/download'
-
-  if (BACKEND_MODE === 'real') {
-    const res = await fetch(`${BACKEND_URL}?url=${encodeURIComponent(url)}&variant=${variant}`)
-    if (!res.ok) throw new Error('Failed to contact backend')
-    return await res.json()
-  }
-
-  // Mock demo data
-  await new Promise(r => setTimeout(r, 800))
-  const plat = getPlatform(url) || 'unknown'
-  const title = `${plat.toUpperCase()} sample video`
-  return {
-    ok: true,
-    title,
-    thumb: 'https://placehold.co/640x360/png?text=Preview',
-    sources: [
-      { quality: '1080p', format: 'mp4', url: '#' },
-      { quality: '720p', format: 'mp4', url: '#' },
-      { quality: '480p', format: 'mp4', url: '#' },
-    ],
-  }
-}
-
-export default function App () {
-  const [input, setInput] = useState('')
-  const [status, setStatus] = useState('idle') // idle | checking | ready | error
-  const [error, setError] = useState(null)
-  const [result, setResult] = useState(null)
-  const [variant, setVariant] = useState(null) // 'nowatermark' | 'watermark'
-
-  const isSupported = useMemo(() => validateUrl(input).ok, [input])
-
-  async function onSearch (e) {
-    e.preventDefault()
-    setResult(null)
-    setVariant(null)
-    setError(null)
-    const v = validateUrl(input)
-    if (!v.ok) { setStatus('error'); setError({ code: v.code, message: v.message }); return }
-    setStatus('ready')
-  }
-
-  async function onChooseVariant (v) {
-    setVariant(v)
-    setStatus('checking')
-    setError(null)
-    setResult(null)
-    try {
-      const data = await fetchDownloadInfo(input, v)
-      if (!data.ok) { setStatus('error'); setError({ code: data.code || 'UNKNOWN', message: data.message || 'Something went wrong' }) }
-      else { setResult(data); setStatus('ready') }
-    } catch (err) {
-      setStatus('error'); setError({ code: 'NETWORK', message: err.message || 'Network error' })
-    }
-  }
-
-  return (
-    <div className='min-h-screen bg-neutral-950 text-white'>
-      <header className='max-w-4xl mx-auto px-4 pt-10 pb-6'>
-        <motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className='text-3xl sm:text-4xl font-bold tracking-tight'>
-          {SITE_NAME}
-        </motion.h1>
-        <p className='text-neutral-300 mt-2'>Paste a supported video link below and choose your download option.</p>
-      </header>
-
-      <section className='max-w-4xl mx-auto px-4'>
-        <div className='rounded-2xl border border-neutral-800 bg-neutral-900/50 p-4 mb-6'>
-          <div className='flex items-center gap-2 mb-3'>
-            <CheckCircle2 className='w-5 h-5' />
-            <span className='font-semibold'>These platforms are available</span>
-          </div>
-          <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4'>
-            {SUPPORTED.map(p => (
-              <div key={p.key} className='flex items-center gap-2 rounded-xl bg-neutral-800/50 p-3'>
-                <img src={p.logo} alt={p.label} className='h-5 w-auto' />
-                <span className='text-sm'>{p.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <main className='max-w-4xl mx-auto px-4'>
-        <form onSubmit={onSearch} className='rounded-2xl border border-neutral-800 bg-neutral-900/70 p-5 shadow-xl'>
-          <label className='block text-sm text-neutral-300 mb-2'>Paste your video link</label>
-          <div className='flex gap-2'>
-            <div className='flex-1 flex items-center gap-2 bg-neutral-800/60 rounded-xl px-3'>
-              <LinkIcon className='w-5 h-5 text-neutral-400' />
-              <input value={input} onChange={e => setInput(e.target.value)} placeholder='https://www.youtube.com/watch?v=...' className='w-full bg-transparent outline-none py-3' />
-            </div>
-            <button type='submit' className='rounded-2xl px-5 py-3 bg-white text-black font-semibold flex items-center gap-2 hover:opacity-90'>
-              <Search className='w-5 h-5' /> Search
-            </button>
-          </div>
-
-          {status === 'error' && error && (
-            <div className='mt-4 flex items-center gap-2 text-red-400'>
-              <AlertTriangle className='w-5 h-5' />
-              <span>{error.message}</span>
-            </div>
-          )}
-
-          {status !== 'error' && isSupported && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='mt-5 grid grid-cols-1 sm:grid-cols-
-
-
-
-
 
 
 

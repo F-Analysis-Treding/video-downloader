@@ -1,86 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>A-Z Video Downloader</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #0078d7;
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-size: 26px;
-      font-weight: bold;
-    }
-    main {
-      max-width: 500px;
-      margin: 40px auto;
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-    .description {
-      color: #444;
-      margin-bottom: 20px;
-      font-size: 18px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-      margin-bottom: 15px;
-    }
-    button {
-      width: 100%;
-      background: #28a745;
-      color: white;
-      padding: 12px;
-      font-size: 18px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #218838;
-    }
-    footer {
-      margin-top: 30px;
-      text-align: center;
-      color: #777;
-      font-size: 14px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-Z Video Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: #1f2937;
+        }
+        input {
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1e40af;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+            color: green;
+        }
+    </style>
 </head>
 <body>
 
-  <header>
-    A-Z Video Downloader
-  </header>
+    <h1>A-Z Video Downloader</h1>
+    <p>Paste your video link below and click Download</p>
 
-  <main>
-    <div class="description">
-      Paste your video link below and click Download.
-    </div>
-    <form action="https://your-download-backend-link.com" method="GET">
-      <input type="text" name="url" placeholder="Paste video link here..." required>
-      <button type="submit">Download</button>
-    </form>
-  </main>
+    <input type="text" id="videoLink" placeholder="Paste your link here">
+    <br>
+    <button onclick="downloadVideo()">Download</button>
 
-  <footer>
-    &copy; 2025 A-Z Video Downloader. All rights reserved.
-  </footer>
+    <div class="result" id="resultMessage"></div>
+
+    <script>
+        function downloadVideo() {
+            const link = document.getElementById("videoLink").value;
+            if (link.trim() === "") {
+                document.getElementById("resultMessage").innerText = "⚠️ Please enter a link!";
+                return;
+            }
+
+            // DEMO BACKEND LINK
+            const backendURL = "https://jsonplaceholder.typicode.com/posts/1";
+
+            fetch(backendURL)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("resultMessage").innerText = 
+                        "✅ Your download is ready! (Demo)";
+                })
+                .catch(error => {
+                    document.getElementById("resultMessage").innerText = 
+                        "❌ Error connecting to server.";
+                });
+        }
+    </script>
 
 </body>
 </html>

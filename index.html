@@ -1,79 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A-Z Video Downloader</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f3f4f6;
-            text-align: center;
-            padding: 50px;
-        }
-        h1 {
-            color: #1f2937;
-        }
-        input {
-            padding: 10px;
-            width: 80%;
-            max-width: 400px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #1e40af;
-        }
-        .result {
-            margin-top: 20px;
-            font-weight: bold;
-            color: green;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Optimization -->
+  <title>Fake Trading - Free Trading Analysis Game</title>
+  <meta name="description" content="Play Fake Trading game with live candles, Buy/Sell/Hold options, and market analysis. This is not real trading, just a safe and fun simulation.">
+  <meta name="keywords" content="fake trading, trading game, crypto simulation, forex fake, binance demo, trading analysis game, candle trading game, fake forex, demo trading">
+  
+  <!-- Open Graph (for social media sharing) -->
+  <meta property="og:title" content="Fake Trading - Free Trading Analysis Game">
+  <meta property="og:description" content="A fun fake trading simulation game with live candles and buy/sell options. Practice trading safely.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourwebsite.github.io/">
+  <meta property="og:image" content="https://yourwebsite.github.io/logo.png">
+
+  <!-- Chart.js Library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    header {
+      background: #222;
+      padding: 15px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #f1c40f;
+    }
+    #disclaimer {
+      background: #c0392b;
+      padding: 10px;
+      font-size: 14px;
+      color: white;
+    }
+    .menu {
+      position: absolute;
+      top: 70px;
+      left: 10px;
+      background: #222;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .menu button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      width: 120px;
+      border: none;
+      background: #f1c40f;
+      color: #111;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .menu button:hover {
+      background: #d4ac0d;
+    }
+    #chartBox {
+      width: 90%;
+      margin: 100px auto 20px;
+      background: #222;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    .actions button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .buy { background: #27ae60; color: white; }
+    .sell { background: #e74c3c; color: white; }
+    .hold { background: #f1c40f; color: black; }
+  </style>
 </head>
 <body>
 
-    <h1>A-Z Video Downloader</h1>
-    <p>Paste your video link below and click Download</p>
+  <header>🔥 Fake Trading Analysis Game 🔥</header>
 
-    <input type="text" id="videoLink" placeholder="Paste your link here">
-    <br>
-    <button onclick="downloadVideo()">Download</button>
+  <div id="disclaimer">
+    ⚠️ DISCLAIMER: This is NOT real trading. It's just a safe and fun fake trading simulation game.
+  </div>
 
-    <div class="result" id="resultMessage"></div>
+  <div class="menu">
+    <h4>Markets</h4>
+    <button onclick="changeMarket('Fake Binance')">F Binance</button>
+    <button onclick="changeMarket('Fake Crypto')">F Crypto</button>
+    <button onclick="changeMarket('Fake Forex')">F Forex</button>
+  </div>
 
-    <script>
-        function downloadVideo() {
-            const link = document.getElementById("videoLink").value;
-            if (link.trim() === "") {
-                document.getElementById("resultMessage").innerText = "⚠️ Please enter a link!";
-                return;
-            }
+  <div id="chartBox">
+    <h3 id="marketName">Fake Binance</h3>
+    <canvas id="fakeChart"></canvas>
+  </div>
 
-            // DEMO BACKEND LINK
-            const backendURL = "https://jsonplaceholder.typicode.com/posts/1";
+  <div class="actions">
+    <button class="buy">BUY</button>
+    <button class="sell">SELL</button>
+    <button class="hold">HOLD</button>
+  </div>
 
-            fetch(backendURL)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("resultMessage").innerText = 
-                        "✅ Your download is ready! (Demo)";
-                })
-                .catch(error => {
-                    document.getElementById("resultMessage").innerText = 
-                        "❌ Error connecting to server.";
-                });
+  <script>
+    // Generate Random Fake Candle Data
+    function generateData() {
+      let data = [];
+      for (let i = 0; i < 20; i++) {
+        data.push(Math.floor(Math.random() * 100) + 50);
+      }
+      return data;
+    }
+
+    let ctx = document.getElementById("fakeChart").getContext("2d");
+    let fakeChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: Array.from({length: 20}, (_, i) => i+1),
+        datasets: [{
+          label: "Price",
+          data: generateData(),
+          borderColor: "#f1c40f",
+          backgroundColor: "rgba(241, 196, 15, 0.2)",
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: "white" } }
+        },
+        scales: {
+          x: { ticks: { color: "white" } },
+          y: { ticks: { color: "white" } }
         }
-    </script>
+      }
+    });
+
+    // Change Market Function
+    function changeMarket(market) {
+      document.getElementById("marketName").innerText = market;
+      fakeChart.data.datasets[0].data = generateData();
+      fakeChart.update();
+    }
+  </script>
 
 </body>
-</html>
+                               </html>

@@ -1,260 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>F. Trending Analysis – Fake Trading Game</title>
-<meta name="description" content="A fun fake trading analysis game. No real money, no risk. Just practice & enjoy!" />
-<style>
-  :root{
-    --bg:#0d1117;--card:#0f172a;--muted:#94a3b8;
-    --green:#22c55e;--red:#ef4444;--blue:#2563eb;--yellow:#facc15;
-    --shadow:0 10px 30px rgba(0,0,0,.35);
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:#fff}
-  .center{display:flex;align-items:center;justify-content:center}
-  .wrap{max-width:980px;margin:0 auto;padding:16px}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  /* WELCOME */
-  #welcome{min-height:100vh;gap:18px;flex-direction:column}
-  .badge{display:inline-block;padding:10px 18px;border-radius:12px;font-weight:800;letter-spacing:.5px}
-  .title-badge{background:#22c55e;color:#032b0f;font-size:clamp(22px,4vw,40px)}
-  .sub-badge{background:#ef4444;color:#fff;font-size:clamp(18px,3.2vw,28px)}
-  .start-btn{border:0;cursor:pointer;padding:16px 36px;border-radius:14px;background:var(--blue);color:#fff;
-    font-weight:900;font-size:clamp(20px,4vw,38px);box-shadow:var(--shadow);transition:.2s transform}
-  .start-btn:active{transform:scale(.98)}
-  .disc-h{background:#b91c1c;color:#ffe600;padding:8px 16px;border-radius:10px;font-weight:900}
-  .disc{max-width:700px;color:#d1d5db;line-height:1.6;text-align:center}
+  <!-- Website Title -->
+  <title>Fake Trading Analysis - Demo Website</title>
 
-  /* APP */
-  #app{display:none;min-height:100vh;flex-direction:column}
-  .topbar{position:sticky;top:0;z-index:3;background:linear-gradient(180deg,#0d1117,#0d111700);padding:8px 12px 4px}
-  .brand{font-weight:900;font-size:clamp(18px,3vw,26px)}
-  .markets{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  .pill{border:0;padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer;background:#0b1220;color:#cbd5e1;border:1px solid #1f2937}
-  .pill.active{background:#111d37;color:#fff;border-color:#334155}
-  .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:8px}
-  @media(min-width:900px){.grid{grid-template-columns:1.2fr .8fr}}
-  .panel{background:var(--card);border:1px solid #1f2937;border-radius:16px;box-shadow:var(--shadow)}
-  .panel h3{margin:0;padding:12px 14px;border-bottom:1px solid #1f2937;color:#e2e8f0}
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Experience a fake trading analysis demo website with moving candles, buy & sell buttons, and interactive features. Just for fun & learning!">
+  <meta name="keywords" content="fake trading, demo trading website, trading analysis, buy sell buttons, candle chart, practice trading, analysis tool">
+  <meta name="author" content="Your Name">
 
-  /* Chart */
-  .chart-wrap{padding:10px 8px 2px}
-  .chart{position:relative;height:360px;width:100%;display:flex;align-items:stretch;gap:6px;overflow:hidden}
-  .candle{position:relative;width:12px;height:100%}
-  .wick{position:absolute;left:50%;transform:translateX(-50%);width:2px;background:#cbd5e1;border-radius:1px}
-  .body{position:absolute;left:1px;right:1px;border-radius:3px}
-  .body.up{background:var(--green)}
-  .body.down{background:var(--red)}
+  <!-- Open Graph (Social Media Preview) -->
+  <meta property="og:title" content="Fake Trading Analysis - Demo Website">
+  <meta property="og:description" content="Check out this fake trading demo website with moving candles and interactive buy/sell options.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourwebsiteurl.com">
+  <meta property="og:image" content="https://yourwebsiteurl.com/preview.png">
 
-  /* Stats */
-  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:12px}
-  @media(min-width:520px){.stats{grid-template-columns:repeat(4,1fr)}}
-  .stat{background:#0b1220;padding:12px;border-radius:12px;border:1px solid #1f2937;text-align:center}
-  .stat .lbl{font-size:12px;color:var(--muted)}
-  .stat .val{font-weight:900;font-size:20px}
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
 
-  /* Controls */
-  .controls{padding:12px;display:grid;gap:10px}
-  .row{display:flex;gap:10px;flex-wrap:wrap}
-  .btn{border:0;padding:14px 18px;border-radius:12px;font-weight:900;cursor:pointer;color:#07121b;box-shadow:var(--shadow);transition:.15s transform}
-  .btn:active{transform:scale(.98)}
-  .btn.buy{background:var(--green)}
-  .btn.sell{background:var(--red);color:#fff}
-  .btn.hold{background:var(--yellow)}
-  .btn.close{background:#64748b;color:#fff}
-  .btn.deposit{background:#000;color:#fff;border:1px solid #334155}
-  .note{color:#93c5fd;font-size:13px;text-align:center;padding:0 12px 14px}
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: white;
+      text-align: center;
+    }
 
-  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#0b1220;border:1px solid #1f2937;padding:10px 14px;border-radius:10px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.3s}
-  .toast.show{opacity:1}
-</style>
+    .welcome {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #141e30, #243b55);
+    }
+
+    .welcome h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .welcome button {
+      padding: 12px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background: #1db954;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .welcome button:hover {
+      background: #17a94e;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #bbb;
+      max-width: 600px;
+    }
+
+    .chart-page {
+      display: none;
+      height: 100vh;
+      background: #0d1117;
+      padding: 20px;
+    }
+
+    canvas {
+      background: #111;
+      border: 1px solid #333;
+      display: block;
+      margin: auto;
+    }
+
+    .controls {
+      margin-top: 20px;
+    }
+
+    .controls button {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    .buy {
+      background: #1db954;
+      color: white;
+    }
+
+    .buy:hover {
+      background: #17a94e;
+    }
+
+    .sell {
+      background: #e63946;
+      color: white;
+    }
+
+    .sell:hover {
+      background: #cc2f3c;
+    }
+  </style>
 </head>
 <body>
-<!-- WELCOME -->
-<section id="welcome" class="center">
-  <div class="wrap center" style="flex-direction:column;">
-    <span class="badge title-badge">WELCOME TO</span>
-    <span class="badge sub-badge">F. TRENDING ANALYSIS</span>
-    <button class="start-btn" onclick="startApp()">START</button>
-    <span class="disc-h" style="margin-top:14px;">DISCLAIMER</span>
-    <p class="disc">THIS WEBSITE IS A SIMULATED TRADING GAME ONLY — NOT A REAL TRADING PLATFORM. NO REAL MONEY, RISK, OR FINANCIAL ADVICE IS INVOLVED.</p>
-  </div>
-</section>
 
-<!-- APP -->
-<section id="app" style="display:none;">
-  <div class="topbar wrap">
-    <div class="brand">WELCOME TO <b>F. TRENDING ANALYSIS</b></div>
-    <div class="markets">
-      <button class="pill active" data-mkt="binance" onclick="switchMarket(this)">F BINANCE</button>
-      <button class="pill" data-mkt="crypto" onclick="switchMarket(this)">F CRYPTO</button>
-      <button class="pill" data-mkt="forex" onclick="switchMarket(this)">F FOREX</button>
-      <span style="margin-left:auto;color:#9ca3af;font-size:12px;">F = FAKE</span>
+  <!-- First Page -->
+  <div class="welcome" id="welcomePage">
+    <h1>Welcome to App Analysis</h1>
+    <button onclick="startTrading()">Start</button>
+    <div class="disclaimer">
+      <p>This is a demo fake trading analysis website. It is only for fun and educational purposes. No real trading is happening here.</p>
     </div>
   </div>
 
-  <div class="wrap grid">
-    <div class="panel">
-      <h3>Live Fake Candles</h3>
-      <div class="chart-wrap"><div id="chart" class="chart"></div></div>
-
-      <div class="stats">
-        <div class="stat"><div class="lbl">PRICE</div><div id="statPrice" class="val">$0.00</div></div>
-        <div class="stat"><div class="lbl">BALANCE</div><div id="statBal" class="val">$0</div></div>
-        <div class="stat"><div class="lbl">POSITION</div><div id="statPos" class="val">NONE</div></div>
-        <div class="stat"><div class="lbl">UNREALIZED P&L</div><div id="statPnL" class="val">$0</div></div>
-      </div>
-
-      <div class="controls">
-        <div class="row">
-          <button class="btn buy" onclick="goLong()">BUY</button>
-          <button class="btn sell" onclick="goShort()">SELL</button>
-          <button class="btn hold" onclick="hold()">HOLD</button>
-          <button class="btn close" onclick="closePosition()">CLOSE</button>
-          <button class="btn deposit" onclick="deposit()">DEPOSIT</button>
-        </div>
-      </div>
-      <div class="note">This is a <b>fake practice game</b>. Data is randomly simulated for fun & learning.</div>
+  <!-- Trading Page -->
+  <div class="chart-page" id="chartPage">
+    <h1>Trading Analysis</h1>
+    <canvas id="chart" width="800" height="400"></canvas>
+    <div class="controls">
+      <button class="buy" onclick="buyAction()">Buy</button>
+      <button class="sell" onclick="sellAction()">Sell</button>
     </div>
-
-    <aside class="panel">
-      <h3>How it works</h3>
-      <div style="padding:12px 14px;color:#cbd5e1;line-height:1.6">
-        <ul style="margin:0 0 0 18px;padding:0;">
-          <li>Markets: <b>F BINANCE / F CRYPTO / F FOREX</b> (different volatility).</li>
-          <li>Every second new OHLC candle with proper body + wick.</li>
-          <li><b>BUY</b>=Long, <b>SELL</b>=Short, <b>CLOSE</b>=realize P&amp;L, <b>DEPOSIT</b>=fake cash.</li>
-        </ul>
-      </div>
-    </aside>
   </div>
-</section>
 
-<div id="toast" class="toast">Saved</div>
+  <script>
+    function startTrading() {
+      document.getElementById("welcomePage").style.display = "none";
+      document.getElementById("chartPage").style.display = "block";
+      drawCandles();
+    }
 
-<script>
-/* ===== State ===== */
-const CHART = document.getElementById('chart');
-const MAX_CANDLES = 60;
+    const canvas = document.getElementById("chart");
+    const ctx = canvas.getContext("2d");
 
-const stats = {
-  priceEl: document.getElementById('statPrice'),
-  balEl: document.getElementById('statBal'),
-  posEl: document.getElementById('statPos'),
-  pnlEl: document.getElementById('statPnL'),
-};
+    let candles = [];
+    const candleWidth = 8;
+    const maxCandles = 100;
 
-let market = 'binance';
-const volByMarket = { binance: 0.8, crypto: 1.3, forex: 0.35 };
+    function randomPrice(lastPrice) {
+      let change = (Math.random() - 0.5) * 20;
+      return Math.max(50, lastPrice + change);
+    }
 
-let balance = 10000;
-let pos = {side:'NONE', entry:null, qty:0};
+    function drawCandles() {
+      let lastPrice = 200;
 
-let candles = []; // {o,h,l,c}
-let timer = null;
+      setInterval(() => {
+        if (candles.length >= maxCandles) {
+          candles.shift();
+        }
 
-/* ===== Utils ===== */
-const fmt = v => (v<0?'-':'') + '$' + Math.abs(v).toFixed(2);
-function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); }
-function resetChart(){ CHART.innerHTML=''; candles=[]; }
-function lastClose(){ return candles.length ? candles[candles.length-1].c : 1000; }
+        let open = lastPrice;
+        let close = randomPrice(lastPrice);
+        let high = Math.max(open, close) + Math.random() * 10;
+        let low = Math.min(open, close) - Math.random() * 10;
 
-function updateStats(){
-  const price = lastClose();
-  stats.priceEl.textContent = '$' + price.toFixed(2);
-  stats.balEl.textContent = '$' + balance.toFixed(2);
-  stats.posEl.textContent = (pos.side==='NONE') ? 'NONE' : `${pos.side} @ $${pos.entry.toFixed(2)}`;
-  let pnl = 0;
-  if(pos.side==='LONG') pnl = (price - pos.entry) * pos.qty;
-  if(pos.side==='SHORT') pnl = (pos.entry - price) * pos.qty;
-  stats.pnlEl.textContent = fmt(pnl);
-  stats.pnlEl.style.color = pnl>=0 ? '#22c55e' : '#ef4444';
-}
+        candles.push({ open, close, high, low });
+        lastPrice = close;
 
-function switchMarket(btn){
-  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  market = btn.dataset.mkt;
-  toast('Switched to ' + btn.textContent);
-  resetChart(); // fresh scale
-}
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-/* ===== Chart rendering (proper OHLC) ===== */
-function scale(){ // dynamic scale from recent candles
-  const start = Math.max(0, candles.length - MAX_CANDLES);
-  const slice = candles.slice(start);
-  let lo = Infinity, hi = -Infinity;
-  slice.forEach(c=>{ if(c.l<lo) lo=c.l; if(c.h>hi) hi=c.h; });
-  if(!isFinite(lo) || !isFinite(hi) || hi-lo<1){ hi=hi+1; lo=lo-1; }
-  const H = CHART.clientHeight || 360;
-  const y = v => (1 - (v - lo)/(hi - lo)) * H;
-  return {y};
-}
+        candles.forEach((candle, index) => {
+          let x = index * (candleWidth + 2);
+          let yOpen = 400 - candle.open;
+          let yClose = 400 - candle.close;
+          let yHigh = 400 - candle.high;
+          let yLow = 400 - candle.low;
 
-function render(){
-  CHART.innerHTML='';
-  const {y} = scale();
-  const start = Math.max(0, candles.length - MAX_CANDLES);
-  for(let i=start;i<candles.length;i++){
-    const c = candles[i];
-    const wrap = document.createElement('div');
-    wrap.className='candle';
+          ctx.beginPath();
+          ctx.moveTo(x + candleWidth / 2, yHigh);
+          ctx.lineTo(x + candleWidth / 2, yLow);
+          ctx.strokeStyle = "white";
+          ctx.stroke();
 
-    // Wick
-    const wick = document.createElement('div');
-    wick.className='wick';
-    const yHigh = y(c.h), yLow = y(c.l);
-    wick.style.top = yHigh+'px';
-    wick.style.height = (yLow - yHigh)+'px';
-    wrap.appendChild(wick);
+          ctx.fillStyle = candle.close > candle.open ? "#1db954" : "#e63946";
+          ctx.fillRect(x, Math.min(yOpen, yClose), candleWidth, Math.abs(yClose - yOpen));
+        });
+      }, 500);
+    }
 
-    // Body
-    const body = document.createElement('div');
-    body.className = 'body ' + (c.c>=c.o?'up':'down');
-    const yOpen = y(c.o), yClose = y(c.c);
-    body.style.top = Math.min(yOpen,yClose)+'px';
-    body.style.height = Math.max(4, Math.abs(yOpen - yClose))+'px';
-    wrap.appendChild(body);
+    function buyAction() {
+      alert("You clicked Buy! (Demo only)");
+    }
 
-    CHART.appendChild(wrap);
-  }
-}
-
-/* ===== Price simulation + tick ===== */
-function nextCandle(){
-  const vol = volByMarket[market] || 1;
-  const prev = lastClose();
-  const drift = (Math.random()-0.5) * 4 * vol; // close movement
-  const open = prev;
-  const close = Math.max(0.1, open + drift);
-  const wig = 2.5 * vol;
-  const high = Math.max(open, close) + Math.random()*wig;
-  const low  = Math.min(open, close) - Math.random()*wig;
-
-  candles.push({o:open, h:high, l:low, c:close});
-  if(candles.length > 200) candles.shift();
-
-  render();
-  updateStats();
-}
-
-function startStream(){ if(timer) clearInterval(timer); timer = setInterval(nextCandle, 1000); }
-
-/* ===== Trading actions ===== */
-function qtyForTrade(){ const price = lastClose(); return Math.max(1, Math.floor((balance*0.1)/price)); }
-function ensureBalance(min){ if(balance<min){ toast('Low balance. Use DEPOSIT!'); return false;} return true; }
-function goLong(){ if(pos.side!=='NONE'){ toast('Close current position first'); return; } const q=qtyForTrade(); const price=lastClose(); if(!ensureBalance(price*q*0.01))return; pos={side:'LONG',entry:price,qty:q}; toast('Opened LONG x'+q); updateStats(); }
-function goShort(){ if(pos.side!=='NONE'){ toast('Close current position first'); return; } const q=qtyForTrade(); pos={side:'SHORT',entry:lastClose(),qty:q}; toast('Opened SHORT x'+q); updateStats(); }
-function hold(){ toast('Holding …'); }
-function closePosition(){ if(pos.side==='NONE'){ toast('No open position'); return; } const price=lastClose(); let pnl=0; if(pos.side==='LONG') pnl=(price-pos.entry)*pos.qty; if(pos.side==='SHORT') pnl=(pos.entry-price)*pos.qty; balance+=pnl; toast(`Closed ${pos.side}. P&L: `+fmt(pnl)); pos={side:'NONE',entry:null,qty:0}; updateStats(); }
-function deposit(){ const v=prompt('Enter fake deposit amount (USD):','1000'); const amt=Number(v); if(!isFinite(amt)||amt<=0){ toast('Invalid amount'); return; } balance+=amt; toast('Balance +$'+amt.toFixed(2)); updateStats(); }
-
-/* ===== Navigation ===== */
-function startApp(){ document.getElementById('welcome').style.display='none'; document.getElementById('app').style.display='flex'; resetChart(); updateStats(); startStream(); }
-if(location.hash==='#play'){ startApp(); }
-</script>
+    function sellAction() {
+      alert("You clicked Sell! (Demo only)");
+    }
+  </script>
 </body>
-                                                        </html>
+</html>

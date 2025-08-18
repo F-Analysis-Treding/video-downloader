@@ -1,158 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- SEO Optimization -->
-  <title>Fake Trading - Free Trading Analysis Game</title>
-  <meta name="description" content="Play Fake Trading game with live candles, Buy/Sell/Hold options, and market analysis. This is not real trading, just a safe and fun simulation.">
-  <meta name="keywords" content="fake trading, trading game, crypto simulation, forex fake, binance demo, trading analysis game, candle trading game, fake forex, demo trading">
-  
-  <!-- Open Graph (for social media sharing) -->
-  <meta property="og:title" content="Fake Trading - Free Trading Analysis Game">
-  <meta property="og:description" content="A fun fake trading simulation game with live candles and buy/sell options. Practice trading safely.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://yourwebsite.github.io/">
-  <meta property="og:image" content="https://yourwebsite.github.io/logo.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Chart.js Library -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
+  <!-- SEO -->
+  <title>Fake Trading Analysis Game | F. Trending Analysis</title>
+  <meta name="description" content="Welcome to F. Trending Analysis — a safe, fake trading analysis game with animated candles and Buy/Sell actions. No real money involved." />
+  <meta name="keywords" content="fake trading, trading analysis game, candle chart simulator, demo trading, paper trading game" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="F. Trending Analysis — Fake Trading Game" />
+  <meta property="og:description" content="Play a safe fake trading analysis game with animated candles and Buy/Sell buttons. No real money." />
+  <meta property="og:type" content="website" />
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      margin: 0;
-      padding: 0;
-      text-align: center;
+    :root{
+      --bg:#0f1821;      /* dark navy */
+      --panel:#121c27;   /* slightly lighter */
+      --green:#19d36b;
+      --red:#ff3b3b;
+      --yellow:#ffd34d;
+      --blue:#2d6cff;
+      --text:#eaf2ff;
     }
-    header {
-      background: #222;
-      padding: 15px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #f1c40f;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;background:var(--bg);color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      line-height:1.4;
     }
-    #disclaimer {
-      background: #c0392b;
-      padding: 10px;
-      font-size: 14px;
-      color: white;
+    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px}
+    /* ---------- SCREEN 1 (WELCOME) ---------- */
+    .card{
+      width:min(900px,95vw);background:var(--panel);border-radius:22px;padding:28px 22px;
+      box-shadow:0 10px 40px rgba(0,0,0,.35);text-align:center
     }
-    .menu {
-      position: absolute;
-      top: 70px;
-      left: 10px;
-      background: #222;
-      padding: 15px;
-      border-radius: 8px;
+    .tag{
+      display:inline-block;padding:8px 16px;border-radius:14px;margin:6px 8px;
+      font-weight:800;letter-spacing:.5px
     }
-    .menu button {
-      display: block;
-      margin: 10px 0;
-      padding: 10px;
-      width: 120px;
-      border: none;
-      background: #f1c40f;
-      color: #111;
-      font-weight: bold;
-      border-radius: 5px;
-      cursor: pointer;
+    .tag.green{background:#32d74b;color:#072b12}
+    .tag.red{background:#ff4747;color:#2a0202}
+    .title{
+      font-size:clamp(30px,7vw,64px);font-weight:900;letter-spacing:1px;margin:6px 0 16px
     }
-    .menu button:hover {
-      background: #d4ac0d;
+    .subtitle{
+      font-size:clamp(18px,3.5vw,28px);font-weight:800;margin:0 0 24px;color:#a6c5ff
     }
-    #chartBox {
-      width: 90%;
-      margin: 100px auto 20px;
-      background: #222;
-      padding: 15px;
-      border-radius: 10px;
+    .btn{
+      display:inline-block;min-width:180px;padding:14px 22px;margin:10px 8px;border:none;cursor:pointer;
+      font-size:clamp(18px,4.4vw,28px);font-weight:900;border-radius:16px;transition:transform .08s ease, filter .2s ease
     }
-    .actions button {
-      margin: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      font-weight: bold;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+    .btn:active{transform:translateY(1px)}
+    .btn.start{background:var(--blue);color:#fff;box-shadow:0 8px 0 #163b88}
+    .btn.disc{background:#ff3c00;color:#fff;box-shadow:0 8px 0 #7c1d00}
+    .disclaimer{
+      margin-top:14px;font-size:clamp(13px,3.5vw,16px);color:#d9dce5;opacity:.95
     }
-    .buy { background: #27ae60; color: white; }
-    .sell { background: #e74c3c; color: white; }
-    .hold { background: #f1c40f; color: black; }
+
+    /* ---------- SCREEN 2 (GAME) ---------- */
+    .game{
+      display:none;flex-direction:column;gap:12px;
+      width:min(1100px,96vw);margin:16px auto;
+    }
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--panel);
+      padding:14px 16px;border-radius:16px;box-shadow:0 6px 22px rgba(0,0,0,.25)
+    }
+    .brand{display:flex;align-items:baseline;gap:10px}
+    .brand h1{
+      margin:0;font-size:clamp(20px,4.5vw,32px);font-weight:900;letter-spacing:.5px
+    }
+    .pill{font-weight:900;font-size:12px;background:#111d2a;color:#9bc9ff;border:1px solid #2b4667;padding:6px 10px;border-radius:999px}
+    .stats{display:flex;align-items:center;gap:12px;font-size:14px}
+    .stat{background:#0c1420;border:1px solid #243347;border-radius:12px;padding:6px 10px}
+    .stat b{color:#fff}
+    .chartWrap{
+      background:#0b141e;border-radius:18px;padding:10px 10px 0 10px;box-shadow:inset 0 0 0 1px #1b2a3a, 0 10px 30px rgba(0,0,0,.25)
+    }
+    canvas{width:100%;height:54vh;display:block;border-radius:14px}
+    .actions{
+      display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:12px 0
+    }
+    .bigbtn{
+      min-width:160px;padding:14px 18px;font-size:clamp(18px,4vw,26px);font-weight:900;border:none;border-radius:14px;cursor:pointer
+    }
+    .buy{background:var(--green);color:#062212;box-shadow:0 8px 0 #0a7a3a}
+    .sell{background:var(--red);color:#2a0202;box-shadow:0 8px 0 #7c1111}
+    .deposit{background:#111;color:#fff;border:2px solid #3b4a5e}
+    .note{opacity:.75;text-align:center;margin-top:6px;font-size:13px}
+    .footerlink{opacity:.55;text-align:center;margin:10px 0 0;font-size:12px}
+    a,button{outline:none}
   </style>
 </head>
 <body>
 
-  <header>🔥 Fake Trading Analysis Game 🔥</header>
-
-  <div id="disclaimer">
-    ⚠️ DISCLAIMER: This is NOT real trading. It's just a safe and fun fake trading simulation game.
-  </div>
-
-  <div class="menu">
-    <h4>Markets</h4>
-    <button onclick="changeMarket('Fake Binance')">F Binance</button>
-    <button onclick="changeMarket('Fake Crypto')">F Crypto</button>
-    <button onclick="changeMarket('Fake Forex')">F Forex</button>
-  </div>
-
-  <div id="chartBox">
-    <h3 id="marketName">Fake Binance</h3>
-    <canvas id="fakeChart"></canvas>
-  </div>
-
-  <div class="actions">
-    <button class="buy">BUY</button>
-    <button class="sell">SELL</button>
-    <button class="hold">HOLD</button>
-  </div>
-
-  <script>
-    // Generate Random Fake Candle Data
-    function generateData() {
-      let data = [];
-      for (let i = 0; i < 20; i++) {
-        data.push(Math.floor(Math.random() * 100) + 50);
-      }
-      return data;
-    }
-
-    let ctx = document.getElementById("fakeChart").getContext("2d");
-    let fakeChart = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: Array.from({length: 20}, (_, i) => i+1),
-        datasets: [{
-          label: "Price",
-          data: generateData(),
-          borderColor: "#f1c40f",
-          backgroundColor: "rgba(241, 196, 15, 0.2)",
-          fill: true,
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { labels: { color: "white" } }
-        },
-        scales: {
-          x: { ticks: { color: "white" } },
-          y: { ticks: { color: "white" } }
-        }
-      }
-    });
-
-    // Change Market Function
-    function changeMarket(market) {
-      document.getElementById("marketName").innerText = market;
-      fakeChart.data.datasets[0].data = generateData();
-      fakeChart.update();
-    }
-  </script>
-
-</body>
-                               </html>
+  <!-- SCREEN 1: WELCOME -->
+  <section class="wrap" id="welcomeScreen">
+    <div class="card">
+      <div class="tag green">WELCOME TO</div>
+      <h2 class="title">F.TRDING ANALYSIS</h2>
+      <button class="btn start" onclick="goToGame()">START</button>
+      <br/>
+      <button class="btn disc" onclick="toggleDisclaimer()">DISCLAIMER</button>
+      <p class="disclaimer" id="welcomeDisc" style="display:none;">
+        THIS WEBSITE IS A SIMULATED TRADING GAME ONLY — NOT A REAL TRADING PLATFORM.
+        NO REAL MONEY, RISK, OR FINANCIAL ADVICE IS INVOLVED

@@ -5,130 +5,86 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>F. Trending Analysis – Fake Trading Game</title>
 <meta name="description" content="A fun fake trading analysis game. No real money, no risk. Just practice & enjoy!" />
-
 <style>
   :root{
-    --bg:#0d1117;
-    --panel:#111827;
-    --muted:#94a3b8;
-    --green:#22c55e;
-    --red:#ef4444;
-    --blue:#2563eb;
-    --yellow:#facc15;
-    --card:#0f172a;
+    --bg:#0d1117;--card:#0f172a;--muted:#94a3b8;
+    --green:#22c55e;--red:#ef4444;--blue:#2563eb;--yellow:#facc15;
     --shadow:0 10px 30px rgba(0,0,0,.35);
   }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{
-    margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial;
-    background:var(--bg); color:#fff;
-  }
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:#fff}
   .center{display:flex;align-items:center;justify-content:center}
   .wrap{max-width:980px;margin:0 auto;padding:16px}
 
   /* WELCOME */
-  #welcome{min-height:100vh; gap:18px; flex-direction:column}
+  #welcome{min-height:100vh;gap:18px;flex-direction:column}
   .badge{display:inline-block;padding:10px 18px;border-radius:12px;font-weight:800;letter-spacing:.5px}
-  .title-badge{background:#22c55e;color:#032b0f; font-size:clamp(22px,4vw,40px)}
-  .sub-badge{background:#ef4444;color:#fff; font-size:clamp(18px,3.2vw,28px)}
-  .start-btn{
-    border:0; outline:0; cursor:pointer; padding:16px 36px; border-radius:14px;
-    background:var(--blue); color:#fff; font-weight:900; font-size:clamp(20px,4vw,38px);
-    box-shadow:var(--shadow); transition:.2s transform, .2s filter;
-  }
+  .title-badge{background:#22c55e;color:#032b0f;font-size:clamp(22px,4vw,40px)}
+  .sub-badge{background:#ef4444;color:#fff;font-size:clamp(18px,3.2vw,28px)}
+  .start-btn{border:0;cursor:pointer;padding:16px 36px;border-radius:14px;background:var(--blue);color:#fff;
+    font-weight:900;font-size:clamp(20px,4vw,38px);box-shadow:var(--shadow);transition:.2s transform}
   .start-btn:active{transform:scale(.98)}
   .disc-h{background:#b91c1c;color:#ffe600;padding:8px 16px;border-radius:10px;font-weight:900}
   .disc{max-width:700px;color:#d1d5db;line-height:1.6;text-align:center}
 
-  /* APP (trading page) */
-  #app{display:none; min-height:100vh; flex-direction:column}
-  .topbar{
-    position:sticky; top:0; z-index:3; background:linear-gradient(180deg,#0d1117,#0d111700);
-    padding:8px 12px 4px;
-  }
-  .brand{font-weight:900; font-size:clamp(18px,3vw,26px)}
-  .markets{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
-  .pill{
-    border:0; padding:8px 12px; border-radius:999px; font-weight:700; cursor:pointer;
-    background:#0b1220; color:#cbd5e1; border:1px solid #1f2937;
-  }
+  /* APP */
+  #app{display:none;min-height:100vh;flex-direction:column}
+  .topbar{position:sticky;top:0;z-index:3;background:linear-gradient(180deg,#0d1117,#0d111700);padding:8px 12px 4px}
+  .brand{font-weight:900;font-size:clamp(18px,3vw,26px)}
+  .markets{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .pill{border:0;padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer;background:#0b1220;color:#cbd5e1;border:1px solid #1f2937}
   .pill.active{background:#111d37;color:#fff;border-color:#334155}
-  .grid{display:grid; grid-template-columns:1fr; gap:14px; margin-top:8px}
-  @media(min-width:900px){ .grid{grid-template-columns:1.2fr .8fr} }
-
-  .panel{background:var(--card); border:1px solid #1f2937; border-radius:16px; box-shadow:var(--shadow)}
-  .panel h3{margin:0; padding:12px 14px; border-bottom:1px solid #1f2937; color:#e2e8f0}
+  .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:8px}
+  @media(min-width:900px){.grid{grid-template-columns:1.2fr .8fr}}
+  .panel{background:var(--card);border:1px solid #1f2937;border-radius:16px;box-shadow:var(--shadow)}
+  .panel h3{margin:0;padding:12px 14px;border-bottom:1px solid #1f2937;color:#e2e8f0}
 
   /* Chart */
   .chart-wrap{padding:10px 8px 2px}
-  .chart{
-    height:360px; width:100%; display:flex; align-items:flex-end; gap:6px; overflow:hidden;
-  }
-  .candle{
-    width:14px; border-radius:3px; position:relative; transition:height .3s ease;
-  }
-  .candle.up{background:var(--green)}
-  .candle.down{background:var(--red)}
-  .wick{
-    position:absolute; left:50%; transform:translateX(-50%);
-    width:2px; background:#cbd5e1; border-radius:1px;
-  }
+  .chart{position:relative;height:360px;width:100%;display:flex;align-items:stretch;gap:6px;overflow:hidden}
+  .candle{position:relative;width:12px;height:100%}
+  .wick{position:absolute;left:50%;transform:translateX(-50%);width:2px;background:#cbd5e1;border-radius:1px}
+  .body{position:absolute;left:1px;right:1px;border-radius:3px}
+  .body.up{background:var(--green)}
+  .body.down{background:var(--red)}
 
   /* Stats */
-  .stats{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding:12px}
-  @media(min-width:520px){ .stats{grid-template-columns:repeat(4,1fr)} }
-  .stat{
-    background:#0b1220; padding:12px; border-radius:12px; border:1px solid #1f2937;
-    text-align:center;
-  }
-  .stat .lbl{font-size:12px; color:var(--muted)}
-  .stat .val{font-weight:900; font-size:20px}
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:12px}
+  @media(min-width:520px){.stats{grid-template-columns:repeat(4,1fr)}}
+  .stat{background:#0b1220;padding:12px;border-radius:12px;border:1px solid #1f2937;text-align:center}
+  .stat .lbl{font-size:12px;color:var(--muted)}
+  .stat .val{font-weight:900;font-size:20px}
 
   /* Controls */
-  .controls{padding:12px; display:grid; gap:10px}
-  .row{display:flex; gap:10px; flex-wrap:wrap}
-  .btn{
-    border:0; padding:14px 18px; border-radius:12px; font-weight:900; cursor:pointer;
-    color:#07121b; box-shadow:var(--shadow); transition:.15s transform;
-  }
+  .controls{padding:12px;display:grid;gap:10px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{border:0;padding:14px 18px;border-radius:12px;font-weight:900;cursor:pointer;color:#07121b;box-shadow:var(--shadow);transition:.15s transform}
   .btn:active{transform:scale(.98)}
   .btn.buy{background:var(--green)}
-  .btn.sell{background:var(--red); color:#fff}
+  .btn.sell{background:var(--red);color:#fff}
   .btn.hold{background:var(--yellow)}
-  .btn.close{background:#64748b; color:#fff}
-  .btn.deposit{background:#000; color:#fff; border:1px solid #334155}
+  .btn.close{background:#64748b;color:#fff}
+  .btn.deposit{background:#000;color:#fff;border:1px solid #334155}
+  .note{color:#93c5fd;font-size:13px;text-align:center;padding:0 12px 14px}
 
-  .note{color:#93c5fd; font-size:13px; text-align:center; padding:0 12px 14px}
-
-  /* Toast */
-  .toast{
-    position:fixed; left:50%; transform:translateX(-50%); bottom:16px;
-    background:#0b1220; border:1px solid #1f2937; padding:10px 14px; border-radius:10px;
-    box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:.3s ease;
-  }
+  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#0b1220;border:1px solid #1f2937;padding:10px 14px;border-radius:10px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.3s}
   .toast.show{opacity:1}
 </style>
 </head>
 <body>
-
-<!-- ================= WELCOME PAGE ================= -->
+<!-- WELCOME -->
 <section id="welcome" class="center">
   <div class="wrap center" style="flex-direction:column;">
     <span class="badge title-badge">WELCOME TO</span>
     <span class="badge sub-badge">F. TRENDING ANALYSIS</span>
-
     <button class="start-btn" onclick="startApp()">START</button>
-
     <span class="disc-h" style="margin-top:14px;">DISCLAIMER</span>
-    <p class="disc">
-      THIS WEBSITE IS A SIMULATED TRADING GAME ONLY — NOT A REAL TRADING PLATFORM.
-      NO REAL MONEY, RISK, OR FINANCIAL ADVICE IS INVOLVED.
-    </p>
+    <p class="disc">THIS WEBSITE IS A SIMULATED TRADING GAME ONLY — NOT A REAL TRADING PLATFORM. NO REAL MONEY, RISK, OR FINANCIAL ADVICE IS INVOLVED.</p>
   </div>
 </section>
 
-<!-- ================= TRADING APP ================= -->
+<!-- APP -->
 <section id="app" style="display:none;">
   <div class="topbar wrap">
     <div class="brand">WELCOME TO <b>F. TRENDING ANALYSIS</b></div>
@@ -141,13 +97,9 @@
   </div>
 
   <div class="wrap grid">
-
-    <!-- Chart + stats -->
     <div class="panel">
       <h3>Live Fake Candles</h3>
-      <div class="chart-wrap">
-        <div id="chart" class="chart"></div>
-      </div>
+      <div class="chart-wrap"><div id="chart" class="chart"></div></div>
 
       <div class="stats">
         <div class="stat"><div class="lbl">PRICE</div><div id="statPrice" class="val">$0.00</div></div>
@@ -168,27 +120,23 @@
       <div class="note">This is a <b>fake practice game</b>. Data is randomly simulated for fun & learning.</div>
     </div>
 
-    <!-- Hints / Info -->
     <aside class="panel">
       <h3>How it works</h3>
-      <div style="padding:12px 14px; color:#cbd5e1; line-height:1.6">
-        <ul style="margin:0 0 0 18px; padding:0;">
-          <li>Choose a market: <b>F BINANCE, F CRYPTO, F FOREX</b>. Each has different volatility.</li>
-          <li>Price moves every second, candles stream left → right.</li>
-          <li><b>BUY</b> opens a Long, <b>SELL</b> opens a Short. <b>CLOSE</b> realizes P&amp;L.</li>
-          <li><b>HOLD</b> does nothing (useful when just watching).</li>
-          <li><b>DEPOSIT</b> adds fake dollars to your balance.</li>
+      <div style="padding:12px 14px;color:#cbd5e1;line-height:1.6">
+        <ul style="margin:0 0 0 18px;padding:0;">
+          <li>Markets: <b>F BINANCE / F CRYPTO / F FOREX</b> (different volatility).</li>
+          <li>Every second new OHLC candle with proper body + wick.</li>
+          <li><b>BUY</b>=Long, <b>SELL</b>=Short, <b>CLOSE</b>=realize P&amp;L, <b>DEPOSIT</b>=fake cash.</li>
         </ul>
       </div>
     </aside>
-
   </div>
 </section>
 
 <div id="toast" class="toast">Saved</div>
 
 <script>
-/* ====== State ====== */
+/* ===== State ===== */
 const CHART = document.getElementById('chart');
 const MAX_CANDLES = 60;
 
@@ -200,37 +148,25 @@ const stats = {
 };
 
 let market = 'binance';
-const volByMarket = {
-  binance: 0.8,   // medium
-  crypto: 1.3,    // higher
-  forex: 0.35     // low
-};
+const volByMarket = { binance: 0.8, crypto: 1.3, forex: 0.35 };
 
-let price = 1000;               // start price
-let timer = null;
-
-let balance = 10000;            // fake money
+let balance = 10000;
 let pos = {side:'NONE', entry:null, qty:0};
 
-/* ====== Helpers ====== */
+let candles = []; // {o,h,l,c}
+let timer = null;
+
+/* ===== Utils ===== */
 const fmt = v => (v<0?'-':'') + '$' + Math.abs(v).toFixed(2);
-
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),1600);
-}
-
-function resetChart(){
-  CHART.innerHTML = '';
-}
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); }
+function resetChart(){ CHART.innerHTML=''; candles=[]; }
+function lastClose(){ return candles.length ? candles[candles.length-1].c : 1000; }
 
 function updateStats(){
+  const price = lastClose();
   stats.priceEl.textContent = '$' + price.toFixed(2);
   stats.balEl.textContent = '$' + balance.toFixed(2);
   stats.posEl.textContent = (pos.side==='NONE') ? 'NONE' : `${pos.side} @ $${pos.entry.toFixed(2)}`;
-  // Unrealized PnL
   let pnl = 0;
   if(pos.side==='LONG') pnl = (price - pos.entry) * pos.qty;
   if(pos.side==='SHORT') pnl = (pos.entry - price) * pos.qty;
@@ -243,122 +179,82 @@ function switchMarket(btn){
   btn.classList.add('active');
   market = btn.dataset.mkt;
   toast('Switched to ' + btn.textContent);
-  // reset dynamics for a fresh look
-  price = 1000 + Math.random()*200 - 100;
-  resetChart();
+  resetChart(); // fresh scale
 }
 
-function makeCandle(open, close){
-  const up = close>=open;
-  const body = Math.max(6, Math.min(280, Math.abs(close-open))); // px height
-  const wickTop = Math.max(open, close) + (Math.random()*40);
-  const wickBot = Math.min(open, close) - (Math.random()*40);
+/* ===== Chart rendering (proper OHLC) ===== */
+function scale(){ // dynamic scale from recent candles
+  const start = Math.max(0, candles.length - MAX_CANDLES);
+  const slice = candles.slice(start);
+  let lo = Infinity, hi = -Infinity;
+  slice.forEach(c=>{ if(c.l<lo) lo=c.l; if(c.h>hi) hi=c.h; });
+  if(!isFinite(lo) || !isFinite(hi) || hi-lo<1){ hi=hi+1; lo=lo-1; }
+  const H = CHART.clientHeight || 360;
+  const y = v => (1 - (v - lo)/(hi - lo)) * H;
+  return {y};
+}
 
-  const c = document.createElement('div');
-  c.className = 'candle ' + (up?'up':'down');
-  c.style.height = (body) + 'px';
+function render(){
+  CHART.innerHTML='';
+  const {y} = scale();
+  const start = Math.max(0, candles.length - MAX_CANDLES);
+  for(let i=start;i<candles.length;i++){
+    const c = candles[i];
+    const wrap = document.createElement('div');
+    wrap.className='candle';
 
-  const wick = document.createElement('div');
-  wick.className = 'wick';
-  wick.style.top = (CHART.clientHeight - wickTop) + 'px';
-  wick.style.height = (wickTop - wickBot) + 'px';
-  c.appendChild(wick);
+    // Wick
+    const wick = document.createElement('div');
+    wick.className='wick';
+    const yHigh = y(c.h), yLow = y(c.l);
+    wick.style.top = yHigh+'px';
+    wick.style.height = (yLow - yHigh)+'px';
+    wrap.appendChild(wick);
 
-  CHART.appendChild(c);
-  // trim
-  while(CHART.children.length > MAX_CANDLES){
-    CHART.removeChild(CHART.firstChild);
+    // Body
+    const body = document.createElement('div');
+    body.className = 'body ' + (c.c>=c.o?'up':'down');
+    const yOpen = y(c.o), yClose = y(c.c);
+    body.style.top = Math.min(yOpen,yClose)+'px';
+    body.style.height = Math.max(4, Math.abs(yOpen - yClose))+'px';
+    wrap.appendChild(body);
+
+    CHART.appendChild(wrap);
   }
 }
 
-function tick(){
-  // random walk with market volatility
+/* ===== Price simulation + tick ===== */
+function nextCandle(){
   const vol = volByMarket[market] || 1;
-  const delta = (Math.random() - 0.5) * 12 * vol;
-  const prev = price;
-  price = Math.max(50, prev + delta);
-  const openPx = Math.max(50, prev);
-  const closePx = Math.max(50, price);
+  const prev = lastClose();
+  const drift = (Math.random()-0.5) * 4 * vol; // close movement
+  const open = prev;
+  const close = Math.max(0.1, open + drift);
+  const wig = 2.5 * vol;
+  const high = Math.max(open, close) + Math.random()*wig;
+  const low  = Math.min(open, close) - Math.random()*wig;
 
-  // convert to px scale relative to chart height
-  const map = v => 60 + (v % 240); // keep within 60..300 px range for nice visuals
-  makeCandle(map(openPx), map(closePx));
+  candles.push({o:open, h:high, l:low, c:close});
+  if(candles.length > 200) candles.shift();
+
+  render();
   updateStats();
 }
 
-function startStream(){
-  if(timer) clearInterval(timer);
-  timer = setInterval(tick, 1000);
-}
+function startStream(){ if(timer) clearInterval(timer); timer = setInterval(nextCandle, 1000); }
 
-/* ====== Trading actions ====== */
-function qtyForTrade(){
-  // simple fixed qty based on balance
-  return Math.max(1, Math.floor((balance*0.1) / price)); // ~10% notional
-}
+/* ===== Trading actions ===== */
+function qtyForTrade(){ const price = lastClose(); return Math.max(1, Math.floor((balance*0.1)/price)); }
+function ensureBalance(min){ if(balance<min){ toast('Low balance. Use DEPOSIT!'); return false;} return true; }
+function goLong(){ if(pos.side!=='NONE'){ toast('Close current position first'); return; } const q=qtyForTrade(); const price=lastClose(); if(!ensureBalance(price*q*0.01))return; pos={side:'LONG',entry:price,qty:q}; toast('Opened LONG x'+q); updateStats(); }
+function goShort(){ if(pos.side!=='NONE'){ toast('Close current position first'); return; } const q=qtyForTrade(); pos={side:'SHORT',entry:lastClose(),qty:q}; toast('Opened SHORT x'+q); updateStats(); }
+function hold(){ toast('Holding …'); }
+function closePosition(){ if(pos.side==='NONE'){ toast('No open position'); return; } const price=lastClose(); let pnl=0; if(pos.side==='LONG') pnl=(price-pos.entry)*pos.qty; if(pos.side==='SHORT') pnl=(pos.entry-price)*pos.qty; balance+=pnl; toast(`Closed ${pos.side}. P&L: `+fmt(pnl)); pos={side:'NONE',entry:null,qty:0}; updateStats(); }
+function deposit(){ const v=prompt('Enter fake deposit amount (USD):','1000'); const amt=Number(v); if(!isFinite(amt)||amt<=0){ toast('Invalid amount'); return; } balance+=amt; toast('Balance +$'+amt.toFixed(2)); updateStats(); }
 
-function ensureBalance(min){
-  if(balance < min){
-    toast('Low balance. Use DEPOSIT!');
-    return false;
-  }
-  return true;
-}
-
-function goLong(){
-  if(pos.side!=='NONE'){ toast('Close current position first'); return; }
-  const q = qtyForTrade();
-  const cost = q * price;
-  if(!ensureBalance(cost*0.01)) return; // just a soft check (fake)
-  pos = {side:'LONG', entry:price, qty:q};
-  toast('Opened LONG x'+q);
-  updateStats();
-}
-
-function goShort(){
-  if(pos.side!=='NONE'){ toast('Close current position first'); return; }
-  const q = qtyForTrade();
-  pos = {side:'SHORT', entry:price, qty:q};
-  toast('Opened SHORT x'+q);
-  updateStats();
-}
-
-function hold(){
-  toast('Holding …');
-}
-
-function closePosition(){
-  if(pos.side==='NONE'){ toast('No open position'); return; }
-  let pnl = 0;
-  if(pos.side==='LONG') pnl = (price - pos.entry) * pos.qty;
-  if(pos.side==='SHORT') pnl = (pos.entry - price) * pos.qty;
-  balance += pnl;
-  toast(`Closed ${pos.side}. P&L: ` + fmt(pnl));
-  pos = {side:'NONE', entry:null, qty:0};
-  updateStats();
-}
-
-function deposit(){
-  const v = prompt('Enter fake deposit amount (USD):', '1000');
-  const amt = Number(v);
-  if(!isFinite(amt) || amt<=0){ toast('Invalid amount'); return; }
-  balance += amt;
-  toast('Balance +$' + amt.toFixed(2));
-  updateStats();
-}
-
-/* ====== Navigation ====== */
-function startApp(){
-  document.getElementById('welcome').style.display='none';
-  const app = document.getElementById('app');
-  app.style.display='flex';
-  resetChart();
-  updateStats();
-  startStream();
-}
-
-/* init (in case someone reloads on /#play) */
+/* ===== Navigation ===== */
+function startApp(){ document.getElementById('welcome').style.display='none'; document.getElementById('app').style.display='flex'; resetChart(); updateStats(); startStream(); }
 if(location.hash==='#play'){ startApp(); }
 </script>
 </body>
-            </html>
+                                                        </html>

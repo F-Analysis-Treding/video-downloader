@@ -1,110 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>F. Trending Analysis – Fake Trading Game</title>
+<meta name="description" content="A fun fake trading analysis game. No real money, no risk. Just practice & enjoy!" />
 
-  <!-- SEO -->
-  <title>Fake Trading Analysis Game | F. Trending Analysis</title>
-  <meta name="description" content="Welcome to F. Trending Analysis — a safe, fake trading analysis game with animated candles and Buy/Sell actions. No real money involved." />
-  <meta name="keywords" content="fake trading, trading analysis game, candle chart simulator, demo trading, paper trading game" />
+<style>
+  :root{
+    --bg:#0d1117;
+    --panel:#111827;
+    --muted:#94a3b8;
+    --green:#22c55e;
+    --red:#ef4444;
+    --blue:#2563eb;
+    --yellow:#facc15;
+    --card:#0f172a;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    background:var(--bg); color:#fff;
+  }
+  .center{display:flex;align-items:center;justify-content:center}
+  .wrap{max-width:980px;margin:0 auto;padding:16px}
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="F. Trending Analysis — Fake Trading Game" />
-  <meta property="og:description" content="Play a safe fake trading analysis game with animated candles and Buy/Sell buttons. No real money." />
-  <meta property="og:type" content="website" />
+  /* WELCOME */
+  #welcome{min-height:100vh; gap:18px; flex-direction:column}
+  .badge{display:inline-block;padding:10px 18px;border-radius:12px;font-weight:800;letter-spacing:.5px}
+  .title-badge{background:#22c55e;color:#032b0f; font-size:clamp(22px,4vw,40px)}
+  .sub-badge{background:#ef4444;color:#fff; font-size:clamp(18px,3.2vw,28px)}
+  .start-btn{
+    border:0; outline:0; cursor:pointer; padding:16px 36px; border-radius:14px;
+    background:var(--blue); color:#fff; font-weight:900; font-size:clamp(20px,4vw,38px);
+    box-shadow:var(--shadow); transition:.2s transform, .2s filter;
+  }
+  .start-btn:active{transform:scale(.98)}
+  .disc-h{background:#b91c1c;color:#ffe600;padding:8px 16px;border-radius:10px;font-weight:900}
+  .disc{max-width:700px;color:#d1d5db;line-height:1.6;text-align:center}
 
-  <style>
-    :root{
-      --bg:#0f1821;      /* dark navy */
-      --panel:#121c27;   /* slightly lighter */
-      --green:#19d36b;
-      --red:#ff3b3b;
-      --yellow:#ffd34d;
-      --blue:#2d6cff;
-      --text:#eaf2ff;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;background:var(--bg);color:var(--text);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      line-height:1.4;
-    }
-    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px}
-    /* ---------- SCREEN 1 (WELCOME) ---------- */
-    .card{
-      width:min(900px,95vw);background:var(--panel);border-radius:22px;padding:28px 22px;
-      box-shadow:0 10px 40px rgba(0,0,0,.35);text-align:center
-    }
-    .tag{
-      display:inline-block;padding:8px 16px;border-radius:14px;margin:6px 8px;
-      font-weight:800;letter-spacing:.5px
-    }
-    .tag.green{background:#32d74b;color:#072b12}
-    .tag.red{background:#ff4747;color:#2a0202}
-    .title{
-      font-size:clamp(30px,7vw,64px);font-weight:900;letter-spacing:1px;margin:6px 0 16px
-    }
-    .subtitle{
-      font-size:clamp(18px,3.5vw,28px);font-weight:800;margin:0 0 24px;color:#a6c5ff
-    }
-    .btn{
-      display:inline-block;min-width:180px;padding:14px 22px;margin:10px 8px;border:none;cursor:pointer;
-      font-size:clamp(18px,4.4vw,28px);font-weight:900;border-radius:16px;transition:transform .08s ease, filter .2s ease
-    }
-    .btn:active{transform:translateY(1px)}
-    .btn.start{background:var(--blue);color:#fff;box-shadow:0 8px 0 #163b88}
-    .btn.disc{background:#ff3c00;color:#fff;box-shadow:0 8px 0 #7c1d00}
-    .disclaimer{
-      margin-top:14px;font-size:clamp(13px,3.5vw,16px);color:#d9dce5;opacity:.95
-    }
+  /* APP (trading page) */
+  #app{display:none; min-height:100vh; flex-direction:column}
+  .topbar{
+    position:sticky; top:0; z-index:3; background:linear-gradient(180deg,#0d1117,#0d111700);
+    padding:8px 12px 4px;
+  }
+  .brand{font-weight:900; font-size:clamp(18px,3vw,26px)}
+  .markets{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+  .pill{
+    border:0; padding:8px 12px; border-radius:999px; font-weight:700; cursor:pointer;
+    background:#0b1220; color:#cbd5e1; border:1px solid #1f2937;
+  }
+  .pill.active{background:#111d37;color:#fff;border-color:#334155}
+  .grid{display:grid; grid-template-columns:1fr; gap:14px; margin-top:8px}
+  @media(min-width:900px){ .grid{grid-template-columns:1.2fr .8fr} }
 
-    /* ---------- SCREEN 2 (GAME) ---------- */
-    .game{
-      display:none;flex-direction:column;gap:12px;
-      width:min(1100px,96vw);margin:16px auto;
-    }
-    .topbar{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--panel);
-      padding:14px 16px;border-radius:16px;box-shadow:0 6px 22px rgba(0,0,0,.25)
-    }
-    .brand{display:flex;align-items:baseline;gap:10px}
-    .brand h1{
-      margin:0;font-size:clamp(20px,4.5vw,32px);font-weight:900;letter-spacing:.5px
-    }
-    .pill{font-weight:900;font-size:12px;background:#111d2a;color:#9bc9ff;border:1px solid #2b4667;padding:6px 10px;border-radius:999px}
-    .stats{display:flex;align-items:center;gap:12px;font-size:14px}
-    .stat{background:#0c1420;border:1px solid #243347;border-radius:12px;padding:6px 10px}
-    .stat b{color:#fff}
-    .chartWrap{
-      background:#0b141e;border-radius:18px;padding:10px 10px 0 10px;box-shadow:inset 0 0 0 1px #1b2a3a, 0 10px 30px rgba(0,0,0,.25)
-    }
-    canvas{width:100%;height:54vh;display:block;border-radius:14px}
-    .actions{
-      display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:12px 0
-    }
-    .bigbtn{
-      min-width:160px;padding:14px 18px;font-size:clamp(18px,4vw,26px);font-weight:900;border:none;border-radius:14px;cursor:pointer
-    }
-    .buy{background:var(--green);color:#062212;box-shadow:0 8px 0 #0a7a3a}
-    .sell{background:var(--red);color:#2a0202;box-shadow:0 8px 0 #7c1111}
-    .deposit{background:#111;color:#fff;border:2px solid #3b4a5e}
-    .note{opacity:.75;text-align:center;margin-top:6px;font-size:13px}
-    .footerlink{opacity:.55;text-align:center;margin:10px 0 0;font-size:12px}
-    a,button{outline:none}
-  </style>
+  .panel{background:var(--card); border:1px solid #1f2937; border-radius:16px; box-shadow:var(--shadow)}
+  .panel h3{margin:0; padding:12px 14px; border-bottom:1px solid #1f2937; color:#e2e8f0}
+
+  /* Chart */
+  .chart-wrap{padding:10px 8px 2px}
+  .chart{
+    height:360px; width:100%; display:flex; align-items:flex-end; gap:6px; overflow:hidden;
+  }
+  .candle{
+    width:14px; border-radius:3px; position:relative; transition:height .3s ease;
+  }
+  .candle.up{background:var(--green)}
+  .candle.down{background:var(--red)}
+  .wick{
+    position:absolute; left:50%; transform:translateX(-50%);
+    width:2px; background:#cbd5e1; border-radius:1px;
+  }
+
+  /* Stats */
+  .stats{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding:12px}
+  @media(min-width:520px){ .stats{grid-template-columns:repeat(4,1fr)} }
+  .stat{
+    background:#0b1220; padding:12px; border-radius:12px; border:1px solid #1f2937;
+    text-align:center;
+  }
+  .stat .lbl{font-size:12px; color:var(--muted)}
+  .stat .val{font-weight:900; font-size:20px}
+
+  /* Controls */
+  .controls{padding:12px; display:grid; gap:10px}
+  .row{display:flex; gap:10px; flex-wrap:wrap}
+  .btn{
+    border:0; padding:14px 18px; border-radius:12px; font-weight:900; cursor:pointer;
+    color:#07121b; box-shadow:var(--shadow); transition:.15s transform;
+  }
+  .btn:active{transform:scale(.98)}
+  .btn.buy{background:var(--green)}
+  .btn.sell{background:var(--red); color:#fff}
+  .btn.hold{background:var(--yellow)}
+  .btn.close{background:#64748b; color:#fff}
+  .btn.deposit{background:#000; color:#fff; border:1px solid #334155}
+
+  .note{color:#93c5fd; font-size:13px; text-align:center; padding:0 12px 14px}
+
+  /* Toast */
+  .toast{
+    position:fixed; left:50%; transform:translateX(-50%); bottom:16px;
+    background:#0b1220; border:1px solid #1f2937; padding:10px 14px; border-radius:10px;
+    box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:.3s ease;
+  }
+  .toast.show{opacity:1}
+</style>
 </head>
 <body>
 
-  <!-- SCREEN 1: WELCOME -->
-  <section class="wrap" id="welcomeScreen">
-    <div class="card">
-      <div class="tag green">WELCOME TO</div>
-      <h2 class="title">F.TRDING ANALYSIS</h2>
-      <button class="btn start" onclick="goToGame()">START</button>
-      <br/>
-      <button class="btn disc" onclick="toggleDisclaimer()">DISCLAIMER</button>
-      <p class="disclaimer" id="welcomeDisc" style="display:none;">
-        THIS WEBSITE IS A SIMULATED TRADING GAME ONLY — NOT A REAL TRADING PLATFORM.
-        NO REAL MONEY, RISK, OR FINANCIAL ADVICE IS INVOLVED
+<!-- ================= WELCOME PAGE ================= -->
+<section id="welcome" class="center">
+  <div class="wrap center" style="flex-direction:column;">
+    <span class="badge title-badge">WELCOME TO</span>
+    <span class="badge sub-badge">F. TRENDING ANALYSIS</span>
+
+    <button class="start-btn" onclick="startApp()">START</button>
+
+    <span class="disc-h" style="margin-top:14px;">DISCLAIMER</span>
+    <p class="disc">
+      THIS WEBSITE IS A SIMULATED TRADING GAME ONLY — NOT A REAL TRADING PLATFORM.
+      NO REAL MONEY, RISK, OR FINANCIAL ADVICE IS INVOLVED.
+    </p>
+  </div>
+</section>
+
+<!-- ================= TRADING APP ================= -->
+<section id="app" style="display:none;">
+  <div class="topbar wrap">
+    <div class="brand">WELCOME TO <b>F. TRENDING ANALYSIS</b></div>
+    <div class="markets">
+      <button class="pill active" data-mkt="binance" onclick="switchMarket(this)">F BINANCE</button>
+      <button class="pill" data-mkt="crypto" onclick="switchMarket(this)">F CRYPTO</button>
+      <button class="pill" data-mkt="forex" onclick="switchMarket(this)">F FOREX</button>
+      <span style="margin-left:auto;color:#9ca3af;font-size:12px;">F = FAKE</span>
+    </div>
+  </div>
+
+  <div class="wrap grid">
+
+    <!-- Chart + stats -->
+    <div class="panel">
+      <h3>Live Fake Candles</h3>
+      <div class="chart-wrap">
+        <div id="chart" class="chart"></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="lbl">PRICE</div><div id="statPrice" class="val">$0.00</div></div>
+        <div class="stat"><div class="lbl">BALANCE</div><div id="statBal" class="val">$0</div></div>
+        <div class="stat"><div class="lbl">POSITION</div><div id="statPos" class="val">NONE</div></div>
+        <div class="stat"><div class="lbl">UNREALIZED P&L</div><div id="statPnL" class="val">$0</div></div>
+      </div>
+
+      <div class="controls">
+        <div class="row">
+          <button class="btn buy" onclick="goLong()">BUY</button>
+          <button class="btn sell" onclick="goShort()">SELL</button>
+          <button class="btn hold" onclick="hold()">HOLD</button>
+          <button class="btn close" onclick="closePosition()">CLOSE</button>
+          <button class="btn deposit" onclick="deposit()">DEPOSIT</button>
+        </div>
+      </div>
+      <div class="note">This is a <b>fake practice game</b>. Data is randomly simulated for fun & learning.</div>
+    </div>
+
+    <!-- Hints / Info -->
+    <aside class="panel">
+      <h3>How it works</h3>
+      <div style="padding:12px 14px; color:#cbd5e1; line-height:1.6">
+        <ul style="margin:0 0 0 18px; padding:0;">
+          <li>Choose a market: <b>F BINANCE, F CRYPTO, F FOREX</b>. Each has different volatility.</li>
+          <li>Price moves every second, candles stream left → right.</li>
+          <li><b>BUY</b> opens a Long, <b>SELL</b> opens a Short. <b>CLOSE</b> realizes P&amp;L.</li>
+          <li><b>HOLD</b> does nothing (useful when just watching).</li>
+          <li><b>DEPOSIT</b> adds fake dollars to your balance.</li>
+        </ul>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<div id="toast" class="toast">Saved</div>
+
+<script>
+/* ====== State ====== */
+const CHART = document.getElementById('chart');
+const MAX_CANDLES = 60;
+
+const stats = {
+  priceEl: document.getElementById('statPrice'),
+  balEl: document.getElementById('statBal'),
+  posEl: document.getElementById('statPos'),
+  pnlEl: document.getElementById('statPnL'),
+};
+
+let market = 'binance';
+const volByMarket = {
+  binance: 0.8,   // medium
+  crypto: 1.3,    // higher
+  forex: 0.35     // low
+};
+
+let price = 1000;               // start price
+let timer = null;
+
+let balance = 10000;            // fake money
+let pos = {side:'NONE', entry:null, qty:0};
+
+/* ====== Helpers ====== */
+const fmt = v => (v<0?'-':'') + '$' + Math.abs(v).toFixed(2);
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1600);
+}
+
+function resetChart(){
+  CHART.innerHTML = '';
+}
+
+function updateStats(){
+  stats.priceEl.textContent = '$' + price.toFixed(2);
+  stats.balEl.textContent = '$' + balance.toFixed(2);
+  stats.posEl.textContent = (pos.side==='NONE') ? 'NONE' : `${pos.side} @ $${pos.entry.toFixed(2)}`;
+  // Unrealized PnL
+  let pnl = 0;
+  if(pos.side==='LONG') pnl = (price - pos.entry) * pos.qty;
+  if(pos.side==='SHORT') pnl = (pos.entry - price) * pos.qty;
+  stats.pnlEl.textContent = fmt(pnl);
+  stats.pnlEl.style.color = pnl>=0 ? '#22c55e' : '#ef4444';
+}
+
+function switchMarket(btn){
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  market = btn.dataset.mkt;
+  toast('Switched to ' + btn.textContent);
+  // reset dynamics for a fresh look
+  price = 1000 + Math.random()*200 - 100;
+  resetChart();
+}
+
+function makeCandle(open, close){
+  const up = close>=open;
+  const body = Math.max(6, Math.min(280, Math.abs(close-open))); // px height
+  const wickTop = Math.max(open, close) + (Math.random()*40);
+  const wickBot = Math.min(open, close) - (Math.random()*40);
+
+  const c = document.createElement('div');
+  c.className = 'candle ' + (up?'up':'down');
+  c.style.height = (body) + 'px';
+
+  const wick = document.createElement('div');
+  wick.className = 'wick';
+  wick.style.top = (CHART.clientHeight - wickTop) + 'px';
+  wick.style.height = (wickTop - wickBot) + 'px';
+  c.appendChild(wick);
+
+  CHART.appendChild(c);
+  // trim
+  while(CHART.children.length > MAX_CANDLES){
+    CHART.removeChild(CHART.firstChild);
+  }
+}
+
+function tick(){
+  // random walk with market volatility
+  const vol = volByMarket[market] || 1;
+  const delta = (Math.random() - 0.5) * 12 * vol;
+  const prev = price;
+  price = Math.max(50, prev + delta);
+  const openPx = Math.max(50, prev);
+  const closePx = Math.max(50, price);
+
+  // convert to px scale relative to chart height
+  const map = v => 60 + (v % 240); // keep within 60..300 px range for nice visuals
+  makeCandle(map(openPx), map(closePx));
+  updateStats();
+}
+
+function startStream(){
+  if(timer) clearInterval(timer);
+  timer = setInterval(tick, 1000);
+}
+
+/* ====== Trading actions ====== */
+function qtyForTrade(){
+  // simple fixed qty based on balance
+  return Math.max(1, Math.floor((balance*0.1) / price)); // ~10% notional
+}
+
+function ensureBalance(min){
+  if(balance < min){
+    toast('Low balance. Use DEPOSIT!');
+    return false;
+  }
+  return true;
+}
+
+function goLong(){
+  if(pos.side!=='NONE'){ toast('Close current position first'); return; }
+  const q = qtyForTrade();
+  const cost = q * price;
+  if(!ensureBalance(cost*0.01)) return; // just a soft check (fake)
+  pos = {side:'LONG', entry:price, qty:q};
+  toast('Opened LONG x'+q);
+  updateStats();
+}
+
+function goShort(){
+  if(pos.side!=='NONE'){ toast('Close current position first'); return; }
+  const q = qtyForTrade();
+  pos = {side:'SHORT', entry:price, qty:q};
+  toast('Opened SHORT x'+q);
+  updateStats();
+}
+
+function hold(){
+  toast('Holding …');
+}
+
+function closePosition(){
+  if(pos.side==='NONE'){ toast('No open position'); return; }
+  let pnl = 0;
+  if(pos.side==='LONG') pnl = (price - pos.entry) * pos.qty;
+  if(pos.side==='SHORT') pnl = (pos.entry - price) * pos.qty;
+  balance += pnl;
+  toast(`Closed ${pos.side}. P&L: ` + fmt(pnl));
+  pos = {side:'NONE', entry:null, qty:0};
+  updateStats();
+}
+
+function deposit(){
+  const v = prompt('Enter fake deposit amount (USD):', '1000');
+  const amt = Number(v);
+  if(!isFinite(amt) || amt<=0){ toast('Invalid amount'); return; }
+  balance += amt;
+  toast('Balance +$' + amt.toFixed(2));
+  updateStats();
+}
+
+/* ====== Navigation ====== */
+function startApp(){
+  document.getElementById('welcome').style.display='none';
+  const app = document.getElementById('app');
+  app.style.display='flex';
+  resetChart();
+  updateStats();
+  startStream();
+}
+
+/* init (in case someone reloads on /#play) */
+if(location.hash==='#play'){ startApp(); }
+</script>
+</body>
+            </html>
